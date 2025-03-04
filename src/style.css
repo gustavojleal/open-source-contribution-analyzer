@@ -1,0 +1,202 @@
+/* HEADER */
+.header {
+  background: var(--primary-black);
+  padding: 1rem 2rem;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.header-title {
+  color: var(--primary-yellow);
+  margin: 0;
+  font-size: 1.8rem;
+  font-weight: 600;
+  font-family: var(--font-family);
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.header-title svg {
+  flex-shrink: 0;
+}
+
+.header-title span {
+  border-bottom: 3px solid var(--primary-yellow);
+  padding-bottom: 0.25rem;
+}
+
+/* APP CONTAINER */
+.app-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+  min-height: 100vh;
+  background-color: var(--secondary-gray);
+}
+
+/* LOADING SPINNER */
+.loading-spinner {
+  display: block;
+  margin: 2rem auto;
+  color: var(--primary-yellow) !important;
+}
+
+/* ERROR ALERT */
+.error-alert {
+  margin: 2rem 0 !important;
+  background-color: #f8d7da !important;
+  color: #721c24 !important;
+  border-color: #f5c6cb !important;
+}
+
+/* REPOSITORY INFO */
+.repo-info {
+  background: white;
+  padding: 2rem;
+  border-radius: 8px;
+  margin: 2rem 0;
+}
+
+.repo-name {
+  color: var(--primary-black);
+  margin: 0 0 1rem 0;
+}
+
+.repo-description {
+  color: #666;
+  margin: 0 0 1.5rem 0;
+}
+
+.repo-stats {
+  display: flex;
+  gap: 1.5rem;
+}
+
+.stat-item {
+  background: var(--secondary-gray);
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  font-weight: 500;
+}
+
+/* CONTRIBUTORS SECTION */
+.contributors-section {
+  margin-top: 2rem;
+  background: white;
+  padding: 2rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.section-title {
+  color: var(--primary-black);
+  margin: 0 0 1.5rem 0;
+}
+
+.load-more-button {
+  margin-top: 1.5rem !important;
+  background-color: var(--primary-yellow) !important;
+  color: var(--primary-black) !important;
+  font-weight: 600 !important;
+}
+
+.load-more-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.contributors-table-container {
+  max-height: 700px; /* Defina a altura máxima do contêiner da tabela */
+  overflow-y: auto; /* Adicione rolagem vertical */
+}
+
+.contributors-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.table-header {
+  position: sticky;
+  top: 0;
+  background-color: #f5f5f5;
+  z-index: 2; /* Certifique-se de que o cabeçalho fique acima das linhas da tabela */
+  font-weight: bold;
+}
+
+.table-row:nth-of-type(odd) {
+  background-color: #f9f9f9;
+}
+
+.table-cell {
+  padding: 10px;
+  text-align: left;
+}
+
+.avatar {
+  width: 30px;
+  border-radius: 50%;
+}
+
+/* REPOSITORY FORM */
+.repository-form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 20px 0;
+}
+
+.repository-form input {
+  margin: 10px 0;
+  padding: 10px;
+  width: 300px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.repository-form button {
+  padding: 10px 20px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.repository-form button:hover {
+  background-color: #0056b3;
+}
+
+.repository-form-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.repository-form-container.with-repo {
+  justify-content: flex-start;
+  align-items: flex-start;
+  height: auto;
+}
+
+.repository-form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.repository-form.with-repo {
+  align-items: flex-start;
+  margin-top: 2rem; /* Adiciona margem superior quando o formulário está na posição with-repo */
+}
+
+.repo-info {
+  margin-left: 20px;
+  margin-top: .5rem; /* Adiciona margem superior para alinhar com o formulário */
+}

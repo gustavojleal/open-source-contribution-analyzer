@@ -1,0 +1,41 @@
+# Web Project Development Plan
+
+## 1. Set up the React app with TypeScript
+- [ x ] Install and config
+
+## 2. Create a Personal Access Token and configure it in the app
+- [ x ] Create Token and .env
+
+## 3. Create the form component to input owner and repository
+- [x] Develop the form component to input the owner and repository
+
+## 4. Handle form submission to trigger API calls
+- [ x ] Implement the form submission logic to trigger API calls
+
+## 5. Fetch repository data and contributor list
+- [ x ] Implement API calls to fetch repository data from GitHub
+- [ x ] Fetch the repository's contributor list
+
+## 6. For each contributor, fetch their user details to get company and location
+- [  ] For each contributor, fetch user details (company and location)
+- [ ] Store and organize contributor data
+- [ x ] Move interface to types.ts
+
+## 7. Display the repository info and contributors in a table
+- [ x ] Develop a table component to display repository info and contributors
+- [ x ] Ensure the table is responsive and user-friendly
+
+## 8. Handle loading states and errors due to rate limiting or network issues
+- [ x ] Implement loading states to display during API calls
+- [ ] Handle rate limiting and network issue errors
+- [ ] Add error messages and user feedback
+
+## 9. Testing and Integration
+- [ ] Write unit tests for key components and functions
+- [ ] Perform integration tests to ensure the system works correctly
+
+## 10. Deployment and Maintenance
+- [ ] Choose a hosting platform (Heroku, AWS, Netlify, etc.)
+- [ ] Set up CI/CD pipeline
+- [ ] Deploy the application to a production environment
+- [ ] Monitor performance and fix bugs as necessary
