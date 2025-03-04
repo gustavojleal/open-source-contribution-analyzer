@@ -1,0 +1,6 @@
+{
+  "owner": "Owner (ex: facebook)",
+  "repository": "Repository (ex: react)",
+  "contributors_per_page": "Contributors per page (1-200)",
+  "analyze": "Analyze"
+}

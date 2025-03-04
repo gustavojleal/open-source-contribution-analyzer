@@ -45,7 +45,7 @@ const RepositoryForm: React.FC<RepositoryFormProps> = ({ onSubmit, repository })
           <input
             type="number"
             id="perPage"
-            placeholder="Contributors per page"
+            placeholder="30"
             defaultValue={30}
             value={perPage}
             min="1"
