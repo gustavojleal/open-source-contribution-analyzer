@@ -61,6 +61,7 @@
   padding: 2rem;
   border-radius: 8px;
   margin: 2rem 0;
+  flex: 1; /* Adiciona flexibilidade para alinhar lado a lado */
 }
 
 .repo-name {
@@ -97,6 +98,7 @@
 .section-title {
   color: var(--primary-black);
   margin: 0 0 1.5rem 0;
+  flex: 1; /* Adiciona flexibilidade para alinhar lado a lado */
 }
 
 .load-more-button {
@@ -151,6 +153,21 @@
   margin: 20px 0;
 }
 
+.repository-form.with-repo {
+  align-items: flex-start;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  margin-right: 1rem;
+}
+
+.repository-form-container.with-repo .repository-form {
+  flex-direction: row;
+  align-items: flex-end; /* Alinha os itens ao final */
+}
+
 .repository-form input {
   margin: 10px 0;
   padding: 10px;
@@ -185,18 +202,41 @@
   height: auto;
 }
 
-.repository-form {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.repository-form.with-repo {
-  align-items: flex-start;
-  margin-top: 2rem; /* Adiciona margem superior quando o formulário está na posição with-repo */
-}
-
 .repo-info {
   margin-left: 20px;
   margin-top: .5rem; /* Adiciona margem superior para alinhar com o formulário */
+}
+
+/* SUMMARY SECTION */
+.summary-section {
+  margin-top: 2rem;
+  background: white;
+  padding: 2rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  flex: 1; /* Adiciona flexibilidade para alinhar lado a lado */
+}
+
+.summary-section ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.summary-section li {
+  margin-bottom: 0.5rem;
+}
+
+/* SUMMARY CONTAINER */
+.summary-container {
+  display: flex;
+  gap: 2rem;
+}
+
+.summary-section {
+  display: flex;
+  justify-content: space-between;
+}
+
+.section-title {
+  flex: 1;
 }

@@ -17,7 +17,7 @@
 - [ x ] Fetch the repository's contributor list
 
 ## 6. For each contributor, fetch their user details to get company and location
-- [  ] For each contributor, fetch user details (company and location)
+- [ x ] For each contributor, fetch user details (company and location)
 - [ ] Store and organize contributor data
 - [ x ] Move interface to types.ts
 

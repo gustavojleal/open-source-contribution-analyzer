@@ -5,6 +5,7 @@ import RepositoryForm from './components/RepositoryForm';
 import Header from './components/Header';
 import { fetchRepository, fetchContributors } from './services/github';
 import { ContributorsTable } from './components/ContributorsTable';
+import Summary from './components/Summary';
 import { Contributor, RepositoryData } from './types';
 import { CircularProgress, Button, Alert } from '@mui/material';
 
@@ -15,6 +16,7 @@ const App: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [perPage, setPerPage] = useState(30);
 
   const loadMoreContributors = async () => {
     if (!repository || currentPage >= totalPages) return;
@@ -25,7 +27,8 @@ const App: React.FC = () => {
       const { contributorsData } = await fetchContributors(
         repository.owner.login,
         repository.name,
-        nextPage
+        nextPage,
+        perPage
       );
 
       setContributors(prev => [...prev, ...contributorsData]);
@@ -37,13 +40,14 @@ const App: React.FC = () => {
     }
   };
 
-  const handleSubmit = async (owner: string, repo: string) => {
+  const handleSubmit = async (owner: string, repo: string, perPage: number) => {
     try {
       resetState();
       setLoading(true);
+      setPerPage(perPage);
 
       const repoData = await fetchRepository(owner, repo);
-      const { contributorsData, totalPages, ownerFollowers } = await fetchContributors(owner, repo, 1);
+      const { contributorsData, totalPages, ownerFollowers } = await fetchContributors(owner, repo, 1, perPage);
 
       setRepository({
         ...repoData,
@@ -94,7 +98,10 @@ const App: React.FC = () => {
           {error}
         </Alert>
       )}
-  
+
+      {contributors.length > 0 && (
+        <Summary contributors={contributors} repository={repository} />
+      )}
       {contributors.length > 0 && (
         <div className="contributors-section">
           <h3 className="section-title">Top Contributors</h3>
@@ -114,6 +121,8 @@ const App: React.FC = () => {
           )}
         </div>
       )}
+
+   
     </div>
   );
 };
