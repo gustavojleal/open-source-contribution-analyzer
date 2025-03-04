@@ -1,13 +1,14 @@
 import React from 'react';
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper } from '@mui/material';
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button } from '@mui/material';
 import { Contributor } from '../types';
-import '../style.css'; // Importando o CSS
+import '../style.css'; 
 
 interface ContributorsTableProps {
   contributors: Contributor[];
+  onAddFavorite: (contributor: Contributor) => void;
 }
 
-export const ContributorsTable: React.FC<ContributorsTableProps> = ({ contributors }) => (
+export const ContributorsTable: React.FC<ContributorsTableProps> = ({ contributors, onAddFavorite }) => (
   <TableContainer component={Paper} className="contributors-table-container">
     <Table className="contributors-table">
       <TableHead>
@@ -18,6 +19,7 @@ export const ContributorsTable: React.FC<ContributorsTableProps> = ({ contributo
           <TableCell className="table-header">Full Name</TableCell>
           <TableCell className="table-header">Company</TableCell>
           <TableCell className="table-header">Location</TableCell>
+          <TableCell className="table-header">Actions</TableCell>
         </TableRow>
       </TableHead>
       <TableBody>
@@ -35,6 +37,15 @@ export const ContributorsTable: React.FC<ContributorsTableProps> = ({ contributo
             <TableCell className="table-cell">{contributor.name || '-'}</TableCell>
             <TableCell className="table-cell">{contributor.company || '-'}</TableCell>
             <TableCell className="table-cell">{contributor.location || '-'}</TableCell>
+            <TableCell className="table-cell">
+              <Button 
+                variant="contained" 
+                color="primary" 
+                onClick={() => onAddFavorite(contributor)}
+              >
+                Add to favorites
+              </Button>
+            </TableCell>
           </TableRow>
         ))}
       </TableBody>

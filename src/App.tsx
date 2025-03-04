@@ -6,12 +6,15 @@ import Header from './components/Header';
 import { fetchRepository, fetchContributors } from './services/github';
 import { ContributorsTable } from './components/ContributorsTable';
 import Summary from './components/Summary';
+import FavoritesPage from './pages/FavoritesPage';
 import { Contributor, RepositoryData } from './types';
 import { CircularProgress, Button, Alert } from '@mui/material';
+import { BrowserRouter as Router, Route, Routes, Link } from 'react-router-dom';
 
 const App: React.FC = () => {
   const [repository, setRepository] = useState<RepositoryData | null>(null);
   const [contributors, setContributors] = useState<Contributor[]>([]);
+  const [favorites, setFavorites] = useState<Contributor[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
@@ -85,45 +88,62 @@ const App: React.FC = () => {
     }
   };
 
+  const addFavorite = (contributor: Contributor) => {
+    setFavorites(prev => [...prev, contributor]);
+  };
+
   return (
-    <div className="app-container">
-      <Header />
-  
-      <RepositoryForm onSubmit={handleSubmit} repository={repository} />
-  
-      {loading && <CircularProgress className="loading-spinner" />}
-  
-      {error && (
-        <Alert severity="error" className="error-alert">
-          {error}
-        </Alert>
-      )}
-
-      {contributors.length > 0 && (
-        <Summary contributors={contributors} repository={repository} />
-      )}
-      {contributors.length > 0 && (
-        <div className="contributors-section">
-          <h3 className="section-title">Top Contributors</h3>
-          <ContributorsTable contributors={contributors} />
-          
-          {currentPage <= totalPages && (
+    <Router>
+      <div className="app-container">
+        <Header />
+        <nav>
+          <Link to="/">Home</Link>
+          <Link to="/favorites">Favorites</Link>
+        </nav>
+        <Routes>
+          <Route path="/" element={
             <>
-            <Button
-              variant="contained"
-              onClick={loadMoreContributors}
-              disabled={loading}
-              className="load-more-button"
-            >
-              {loading ? <CircularProgress size={24} /> : "Load More"}
-            </Button>
+              <RepositoryForm onSubmit={handleSubmit} repository={repository} />
+  
+              {loading && <CircularProgress className="loading-spinner" />}
+  
+              {error && (
+                <Alert severity="error" className="error-alert">
+                  {error}
+                </Alert>
+              )}
+  
+              {contributors.length > 0 && (
+                <Summary contributors={contributors} repository={repository} />
+              )}
+              
+  
+              {contributors.length > 0 && (
+                <div className="contributors-section">
+                  <h3 className="section-title">Top Contributors</h3>
+                  <ContributorsTable contributors={contributors} onAddFavorite={addFavorite} />
+                  
+                  {currentPage <= totalPages && (
+                    <>
+                    <Button
+                      variant="contained"
+                      onClick={loadMoreContributors}
+                      disabled={loading}
+                      className="load-more-button"
+                    >
+                      {loading ? <CircularProgress size={24} /> : "Load More"}
+                    </Button>
+                    </>
+                  )}
+                </div>
+              )}
+  
             </>
-          )}
-        </div>
-      )}
-
-   
-    </div>
+          } />
+          <Route path="/favorites" element={<FavoritesPage favorites={favorites} />} />
+        </Routes>
+      </div>
+    </Router>
   );
 };
 
