@@ -1,23 +1,53 @@
 import axios from "axios";
-import { Contributor } from "../types";
+import { Contributor, GitHubUser, RepositoryData } from "../types";
+import { getTotalPagesFromLinkHeader } from "../utils/tools";
 
-const GITHUB_API = "https://api.github.com";
-const token = process.env.REACT_APP_GITHUB_TOKEN;
+const githubApi = axios.create({
+  baseURL: "https://api.github.com",
+  headers: {
+    Authorization: process.env.REACT_APP_GITHUB_TOKEN
+      ? `Bearer ${process.env.REACT_APP_GITHUB_TOKEN}`
+      : "",
+    Accept: "application/vnd.github.v3+json",
+  },
+});
 
-const headers = {
-  Authorization: token ? `Bearer ${token}` : "",
-  Accept: "application/vnd.github.v3+json",
+const cache: { [key: string]: any } = {};
+
+type PaginationParams = {
+  page?: number;
+  per_page?: number;
 };
 
-export const fetchRepository = async (owner: string, repo: string) => {
-  try {
-    const response = await axios.get(`${GITHUB_API}/repos/${owner}/${repo}`, {
-      headers,
-    });
-    return response.data;
-  } catch (error) {
-    handleApiError(error);
+type ContributorsResponse = {
+  contributorsData: Contributor[];
+  totalPages: number;
+  ownerFollowers: number;
+};
+
+const fetchUserDetails = async (username: string): Promise<GitHubUser> => {
+  const cacheKey = `user_${username}`;
+  if (cache[cacheKey]) {
+    return cache[cacheKey];
   }
+
+  const { data } = await githubApi.get<GitHubUser>(`/users/${username}`);
+  cache[cacheKey] = data;
+  return data;
+};
+
+export const fetchRepository = async (
+  owner: string,
+  repo: string
+): Promise<RepositoryData> => {
+  const cacheKey = `repo_${owner}_${repo}`;
+  if (cache[cacheKey]) {
+    return cache[cacheKey];
+  }
+
+  const { data } = await githubApi.get(`/repos/${owner}/${repo}`);
+  cache[cacheKey] = data;
+  return data;
 };
 
 export const fetchContributors = async (
@@ -25,81 +55,45 @@ export const fetchContributors = async (
   repo: string,
   page: number = 1,
   perPage: number = 30
-): Promise<{
-  contributorsData: Contributor[];
-  totalPages: number;
-  ownerFollowers: number;
-}> => {
+): Promise<ContributorsResponse> => {
+  const cacheKey = `contributors_${owner}_${repo}_page_${page}_perPage_${perPage}`;
+  if (cache[cacheKey]) {
+    return cache[cacheKey];
+  }
+
   try {
-    const response = await axios.get(
-      `${GITHUB_API}/repos/${owner}/${repo}/contributors`,
-      {
-        headers,
-        params: {
-          page,
-          per_page: perPage,
-        },
-      }
-    );
-
-    const linkHeader = response.headers.link;
-    let totalPages = 1;
-
-    if (linkHeader) {
-      const lastPageMatch = linkHeader.match(/page=(\d+)>; rel="last"/);
-      if (lastPageMatch) {
-        totalPages = parseInt(lastPageMatch[1], 10);
-      }
-    }
+    const [contributorsRes, ownerRes] = await Promise.all([
+      githubApi.get(`/repos/${owner}/${repo}/contributors`, {
+        params: { page, per_page: perPage } as PaginationParams,
+      }),
+      githubApi.get<GitHubUser>(`/users/${owner}`),
+    ]);
 
     const contributorsData = await Promise.all(
-      response.data.map(async (contributor: any) => {
-        const userResponse = await axios.get(
-          `${GITHUB_API}/users/${contributor.login}`,
-          { headers }
-        );
-        return {
-          login: contributor.login,
-          contributions: contributor.contributions,
-          avatar_url: contributor.avatar_url,
-          name: userResponse.data.name,
-          company: userResponse.data.company,
-          location: userResponse.data.location,
-        };
-      })
+      contributorsRes.data.map(async (contributor: Contributor) => ({
+        ...contributor,
+        ...(await fetchUserDetails(contributor.login)),
+      }))
     );
 
-    const ownerResponse = await axios.get(`${GITHUB_API}/users/${owner}`, {
-      headers,
-    });
-    const ownerFollowers = ownerResponse.data.followers;
-
-    return {
+    const response = {
       contributorsData,
-      totalPages,
-      ownerFollowers,
+      totalPages: getTotalPagesFromLinkHeader(contributorsRes.headers.link),
+      ownerFollowers: ownerRes.data.followers,
     };
-  } catch (error) {
-    handleApiError(error);
-    return {
-      contributorsData: [],
-      totalPages: 1,
-      ownerFollowers: 0,
-    };
-  }
-};
 
-const handleApiError = (error: unknown) => {
-  if (axios.isAxiosError(error)) {
-    if (
-      error.response?.status === 403 &&
-      error.response.headers["x-ratelimit-remaining"] === "0"
-    ) {
-      throw new Error(
-        "GitHub API rate limit exceeded. Use a personal access token."
-      );
+    cache[cacheKey] = response;
+    return response;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      if (
+        error.response?.status === 403 &&
+        error.response.headers["x-ratelimit-remaining"] === "0"
+      ) {
+        throw new Error("Rate limit exceeded. Use a personal access token.");
+      }
+      throw new Error(error.message);
     }
-    throw new Error(error.message);
+    throw new Error("Unknown error in the request");
   }
-  throw new Error("Unknown error");
 };

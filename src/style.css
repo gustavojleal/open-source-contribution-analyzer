@@ -1,3 +1,35 @@
+.navigation {
+  background: var(--primary-black);
+  padding: 1rem 2rem;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 2rem;
+}
+
+.navigation a {
+  color: var(--primary-yellow);
+  text-decoration: none;
+  font-size: 1.2rem;
+  font-weight: 600;
+  font-family: var(--font-family);
+  transition: color 0.3s ease, border-bottom-color 0.3s ease;
+  border-bottom: 4px solid transparent;
+  padding-bottom: 4px;
+  display: inline-block; /* Garante que a borda funcione corretamente */
+  position: relative;
+}
+
+.navigation a:hover {
+  color: var(--primary-white);
+  border-bottom-color: var(--primary-yellow);
+  transform: translateY(-2px); /* Efeito sutil de levantamento */
+}
+
 /* HEADER */
 .header {
   background: var(--primary-black);
@@ -240,3 +272,4 @@
 .section-title {
   flex: 1;
 }
+

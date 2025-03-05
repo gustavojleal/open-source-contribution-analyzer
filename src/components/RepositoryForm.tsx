@@ -41,14 +41,12 @@ const RepositoryForm: React.FC<RepositoryFormProps> = ({ onSubmit, repository })
           />
         </div>
         <div className="form-group">
-          <label htmlFor="perPage">Contributors up to 200)</label>
+          <label htmlFor="perPage">Contributors (up to 200)</label>
           <input
             type="number"
             id="perPage"
-            placeholder="30"
-            defaultValue={30}
             value={perPage}
-            min="1"
+            min="30"
             max="200"
             onChange={(e) => setPerPage(Number(e.target.value))}
           />

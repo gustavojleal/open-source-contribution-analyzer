@@ -7,6 +7,14 @@ export interface Contributor {
   name?: string;
 }
 
+export type GitHubUser = {
+  login: string;
+  name?: string;
+  company?: string;
+  location?: string;
+  followers: number;
+};
+
 export interface RepositoryData {
   owner: {
     login: string;

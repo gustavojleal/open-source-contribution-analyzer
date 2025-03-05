@@ -1,15 +1,9 @@
-import React, { useState } from 'react';
-import axios from 'axios';
+import React, { useState, useEffect } from 'react';
 import './style.css';
-import RepositoryForm from './components/RepositoryForm';
-import Header from './components/Header';
 import { fetchRepository, fetchContributors } from './services/github';
-import { ContributorsTable } from './components/ContributorsTable';
-import Summary from './components/Summary';
-import FavoritesPage from './pages/FavoritesPage';
 import { Contributor, RepositoryData } from './types';
-import { CircularProgress, Button, Alert } from '@mui/material';
-import { BrowserRouter as Router, Route, Routes, Link } from 'react-router-dom';
+import { handleError, resetState } from './utils/tools';
+import AppRoutes from './components/AppRoutes';
 
 const App: React.FC = () => {
   const [repository, setRepository] = useState<RepositoryData | null>(null);
@@ -20,6 +14,17 @@ const App: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [perPage, setPerPage] = useState(30);
+
+  useEffect(() => {
+    const storedFavorites = localStorage.getItem('favorites');
+    if (storedFavorites) {
+      setFavorites(JSON.parse(storedFavorites));
+    }
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem('favorites', JSON.stringify(favorites));
+  }, [favorites]);
 
   const loadMoreContributors = async () => {
     if (!repository || currentPage >= totalPages) return;
@@ -45,7 +50,7 @@ const App: React.FC = () => {
 
   const handleSubmit = async (owner: string, repo: string, perPage: number) => {
     try {
-      resetState();
+      resetState(setRepository, setContributors, setCurrentPage, setTotalPages, setError);
       setLoading(true);
       setPerPage(perPage);
 
@@ -64,86 +69,36 @@ const App: React.FC = () => {
       setContributors(contributorsData);
       setTotalPages(totalPages);
     } catch (error) {
-      handleError(error);
+      handleError(error, setError);
     } finally {
       setLoading(false);
     }
   };
 
-  const resetState = () => {
-    setRepository(null);
-    setContributors([]);
-    setCurrentPage(1);
-    setTotalPages(1);
-    setError(null);
-  };
-
-  const handleError = (error: unknown) => {
-    if (axios.isAxiosError(error)) {
-      setError(error.response?.status === 404
-        ? "Repository not found"
-        : "API rate limit exceeded or network error");
-    } else {
-      setError("An unexpected error occurred");
-    }
-  };
-
   const addFavorite = (contributor: Contributor) => {
-    setFavorites(prev => [...prev, contributor]);
+    setFavorites(prev => {
+      const isFavorite = prev.some(fav => fav.login === contributor.login);
+      if (isFavorite) {
+        return prev.filter(fav => fav.login !== contributor.login);
+      } else {
+        return [...prev, contributor];
+      }
+    });
   };
 
   return (
-    <Router>
-      <div className="app-container">
-        <Header />
-        <nav>
-          <Link to="/">Home</Link>
-          <Link to="/favorites">Favorites</Link>
-        </nav>
-        <Routes>
-          <Route path="/" element={
-            <>
-              <RepositoryForm onSubmit={handleSubmit} repository={repository} />
-  
-              {loading && <CircularProgress className="loading-spinner" />}
-  
-              {error && (
-                <Alert severity="error" className="error-alert">
-                  {error}
-                </Alert>
-              )}
-  
-              {contributors.length > 0 && (
-                <Summary contributors={contributors} repository={repository} />
-              )}
-              
-  
-              {contributors.length > 0 && (
-                <div className="contributors-section">
-                  <h3 className="section-title">Top Contributors</h3>
-                  <ContributorsTable contributors={contributors} onAddFavorite={addFavorite} />
-                  
-                  {currentPage <= totalPages && (
-                    <>
-                    <Button
-                      variant="contained"
-                      onClick={loadMoreContributors}
-                      disabled={loading}
-                      className="load-more-button"
-                    >
-                      {loading ? <CircularProgress size={24} /> : "Load More"}
-                    </Button>
-                    </>
-                  )}
-                </div>
-              )}
-  
-            </>
-          } />
-          <Route path="/favorites" element={<FavoritesPage favorites={favorites} />} />
-        </Routes>
-      </div>
-    </Router>
+    <AppRoutes
+      repository={repository}
+      contributors={contributors}
+      favorites={favorites}
+      loading={loading}
+      error={error}
+      currentPage={currentPage}
+      totalPages={totalPages}
+      handleSubmit={handleSubmit}
+      loadMoreContributors={loadMoreContributors}
+      addFavorite={addFavorite}
+    />
   );
 };
 
