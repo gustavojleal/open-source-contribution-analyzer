@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, IconButton } from '@mui/material';
 import { Star as StarIcon } from '@mui/icons-material';
 import { Contributor } from '../types';
@@ -11,6 +11,9 @@ interface ContributorsTableProps {
 }
 
 const ContributorsTable: React.FC<ContributorsTableProps> = ({ contributors, onAddFavorite, favorites }) => {
+  useEffect(() => {
+  }, [favorites]);
+
   const handleAddFavorite = (contributor: Contributor) => {
     if (onAddFavorite) {
       onAddFavorite(contributor);
@@ -41,7 +44,11 @@ const ContributorsTable: React.FC<ContributorsTableProps> = ({ contributors, onA
                   className="avatar"
                 />
               </TableCell>
-              <TableCell className="table-cell">{contributor.login}</TableCell>
+              <TableCell className="table-cell">
+                <a href={`https://github.com/${contributor.login}`} target="_blank" rel="noopener noreferrer">
+                  {contributor.login}
+                </a>
+              </TableCell>
               <TableCell className="table-cell">{contributor.contributions}</TableCell>
               <TableCell className="table-cell">{contributor.name || '-'}</TableCell>
               <TableCell className="table-cell">{contributor.company || '-'}</TableCell>
